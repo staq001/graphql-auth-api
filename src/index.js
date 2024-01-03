@@ -47,7 +47,10 @@ app.use('/graphql', graphqlHTTP({
     lastName: String
     email: String
     sex: String
-    password: String
+  }
+
+  input UserPass {
+    password: String!
   }
 
 
@@ -61,6 +64,7 @@ app.use('/graphql', graphqlHTTP({
     createUser(userInput: UserInput): User!
     deleteUser: User!
     updateUser(userInput: UserInputNull): User!
+    updatePassword(userInput: UserPass): User!
   }
 
   schema {
@@ -112,11 +116,25 @@ app.use('/graphql', graphqlHTTP({
           lastName: args.userInput.lastName,
           email: args.userInput.email,
           sex: args.userInput.sex,
-          password: await bcrypt.hash(args.userInput.password, 8)
         }, { new: true, runValidators: true })
         return user
       } catch (e) {
         throw new Error(`Something went wrong ${e}`)
+      }
+    },
+
+    // update password
+    updatePassword: async (args, req) => {
+      if (!req.isAuth) {
+        throw new Error("Please Authenticate!")
+      }
+
+      try {
+        const user = User.findByIdAndUpdate(req.userId, {
+          password: await bcrypt.hash(args.userInput.password, 8)
+        })
+      } catch (e) {
+        throw new Error(`Somehting went wrong ${e}`)
       }
     },
 

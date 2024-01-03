@@ -132,7 +132,8 @@ app.use('/graphql', graphqlHTTP({
       try {
         const user = User.findByIdAndUpdate(req.userId, {
           password: await bcrypt.hash(args.userInput.password, 8)
-        })
+        }, { new: true, runValidators: true })
+        return user
       } catch (e) {
         throw new Error(`Somehting went wrong ${e}`)
       }

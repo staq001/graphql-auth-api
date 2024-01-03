@@ -107,13 +107,12 @@ app.use('/graphql', graphqlHTTP({
         throw new Error("Please authenticate")
       }
       try {
-        const password = await bcrypt.hash(args.userInput.password, 8)
         const user = await User.findByIdAndUpdate(req.userId, {
           firstName: args.userInput.firstName,
           lastName: args.userInput.lastName,
           email: args.userInput.email,
           sex: args.userInput.sex,
-          password
+          password: await bcrypt.hash(args.userInput.password, 8)
         }, { new: true, runValidators: true })
         return user
       } catch (e) {

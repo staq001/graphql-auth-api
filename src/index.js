@@ -16,6 +16,10 @@ app.use(auth) // this wil run on every incoming request.
 
 app.use(bodyParser.json())
 
+app.get('/', (req, res) => {
+  const url = 'https://documenter.getpostman.com/view/32089236/2s9YysBLYN'
+  res.redirect(url)
+})
 
 app.use('/graphql', graphqlHTTP({
   schema: buildSchema(`
@@ -171,6 +175,8 @@ app.use('/graphql', graphqlHTTP({
   },
   graphiql: true
 }))
+
+
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}!`);
